@@ -1,0 +1,267 @@
+﻿    @model StaffEmailSignatures.Models.SignatureHtml
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<!-- <script src="//cdn.tinymce.com/4/tinymce.min.js"></script> -->
+<script src="~/Scripts/tinymce/tinymce.min.js"></script>  
+<script>
+    tinymce.init({
+        selector: "textarea",
+        setup: (function (ed) {
+            ed.on("keyup", function () {
+                $('#lp-message').html(tinymce.activeEditor.getContent());
+            });
+        }),
+        plugins: "preview",
+        toolbar: "preview",
+        menubar: ["view", "file", "edit", "format"],
+        height: "600",
+        width: "750",
+        plugin_preview_width: "750",
+        plugin_preview_height: "600"
+    });
+</script>
+
+<!--    Attempting to create cascading drop down options    -->
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("button#deptButton").on("click", function(){
+            deptChange();
+        });
+
+        function deptChange() {
+            var options = {};
+            options.url = "/home/getdepartments";
+            options.type = "POST";
+            options.data = JSON.stringify({ title: $("#select_title").val() });
+            options.dataType = "json";
+            options.contentType = "application/json";
+            options.success = function (depts) {
+                $("#select_department").empty();
+                $("#select_department").append("<option selected>" + depts[0] + "</option>");
+                for (var i = 1; i < depts.length; i++) {
+                    $("#select_department").append("<option>" + depts[i] + "</option>");
+                }
+                $("#display_title").text($("#select_title option:selected").text());
+                $("#display_department").text($("#select_department option:selected").text());
+
+                var aofOptions = {};
+                aofOptions.url = "/home/gethtml";
+                aofOptions.type = "POST";
+                aofOptions.data = JSON.stringify({ department: $("#select_department option:selected").text() });
+                aofOptions.dataType = "json";
+                aofOptions.contentType = "application/json";
+                aofOptions.success = function (html) {
+                    $("#display_aof").html(html[0]);
+                    $("#display_title").text($("#select_title option:selected").text());
+                    $("#display_department").text($("#select_department option:selected").text());
+                    $("#display_name").text(@Html.Raw(Json.Encode(ViewData["defaultName"])));
+                    $("#display_contact").text(@Html.Raw(Json.Encode(ViewData["defaultContact"])));
+                }
+                $.ajax(aofOptions);
+            };  
+            options.error = function () { alert("Error retrieving departments!"); };
+            $.ajax(options);
+        };
+
+        // First Cascading Dropdown Title => Departments
+        $("#select_title").change(function () {
+            if ($("#select_title").val() != "Please select") {
+                $("#select_title").prop("disabled", false);
+                $("#select_department").prop("disabled", false);    
+                deptChange();
+            }
+            else {
+                $("#select_department").empty();
+                $("#select_department").prop("disabled", true);
+            }
+        });
+    });
+</script>
+
+<script>
+    $.fn.convertLineBreaks = function () {
+        this.each(function () {
+            $(this).on("keypress", function (e) {
+                var br, range, selection, textNode;
+                if (e.keyCode === 13) {
+                    e.preventDefault();
+                    if (window.getSelection) {
+                        selection = window.getSelection();
+                        range = selection.getRangeAt(0);
+                        br = document.createElement("br");
+                        textNode = document.createTextNode("\u00a0");
+                        range.deleteContents();
+                        range.insertNode(br);
+                        range.collapse(false);
+                        range.insertNode(textNode);
+                        range.selectNodeContents(textNode);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                        return false;
+                    }
+                }
+            });
+        });
+    };
+
+    var $editField = $('p[contenteditable=true]');
+
+    $editField.convertLineBreaks();
+
+    $editField.on("keyup", function () {
+        $("div").html($editField.html())
+    });
+
+    function selectText(containerid) {
+        if (document.selection) {
+            var range = document.body.createTextRange();
+            range.moveToElementText(document.getElementById(containerid));
+            range.select();
+        } else if (window.getSelection) {
+            var range = document.createRange();
+            range.selectNode(document.getElementById(containerid));
+            window.getSelection().addRange(range);
+        }
+    }
+
+    function overlay() {
+        el = document.getElementById("overlay");
+        el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
+    }
+
+    @* Modal Dialog Js *@
+    $(function () {
+        // Initailize modal dialog.
+        // Atach modal-container bootstrap attributes to links with .modal-link class
+        // When a link is clicked with these attributes, bootstrap will display the href content in a modal dialog.
+        $('body').on('click', '.modal-link', function (e) {
+            e.preventDefault();
+            $(this).attr('data-target', '#modal-container');
+            $(this).attr('data-toggle', 'modal');
+        });
+
+        // Attach listener to .modal-close-btn's so that when the button is pressed the modal dialog disappears
+        $('body').on('click', '.modal-close-btn', function () {
+            $(this).attr('data-target', '#modal-container');
+            $(this).attr('data-toggle', 'modal');
+        });
+
+        // Clear modal cache, so that new content can be loaded
+        $('#modal-container').on('hidden.bs.modal', function () {
+            $(this).removeData('bs.modal');
+        });
+    });
+</script>
+
+<link rel="stylesheet" href="~/Content/Signature.css">
+
+<div class="jumbotron" style="align-content: center;">
+    <h2>Build Your URJ Email Signature</h2>
+
+    <h3>Now Copy (Ctrl+C) your signature below. To change your Outlook signature, open Outlook 365 (web version) and click on:</h3>
+    <ul>
+        <li><b>Settings</b> (in the menu bar)</li>
+        <li><b>Options</b></li>
+        <li>Mail>Layout>Email Signature</li>
+        <li>remove everything in the large <b>Edit signature</b> box and</li>
+        <li>paste (CTRL+V) your new signature into the box (<b>note:</b> if you do not see our logo, don't worry, it will show up when you appl the change and open up a new window)</li>
+        <li>then click <b>OK</b> to apply the change</li>
+    </ul>
+    <h3>For the desktop version of Outlook:</h3>
+    <ul>
+        <li><b>File</b> (in the menu bar)</li>
+        <li><b>Options</b></li>
+        <li><b>Mail</b></li>
+        <li><b>Signatures</b></li>
+        <li>Select signature to edit</li>
+        <li>remove everything in the large Edit signature Box</li>
+        <li>paste (CTRL+V) your new signature into the box (note: if you do not see our logo, don't worry, it will show up when you apply the change and open up a new email window)</li>
+        <li>then click OK to apply the change</li>
+    </ul>
+
+</div><br>
+
+@* Modal Dialog Container *@
+<div id="modal-container" class="modal fade" tabindex="-1" role="dialog" style="border: 5px solid #3A87AD;">
+    <a href="#close" title="Close" class="modal-close-btn">X</a>
+    <div class="modal-content" style="width:500px !important; margin: 10px auto !important;">
+        <div class="modal-body">
+        </div>  
+    </div>
+</div>
+
+<br/><br/>
+
+
+@Html.DropDownList("SelectedItem", (IEnumerable<SelectListItem>)ViewData["titles"],
+     new {
+         //@onchange = "titleChange()",
+         @id = "select_title", @class="ddTitle"}) 
+
+<select id="select_department"></select>
+
+<br/><br/>
+
+@if ((@User.Identity.Name.ToLower() == "sautry@urj.org") ||
+    (@User.Identity.Name.ToLower() == "sfang@urj.org") ||
+    (@User.Identity.Name.ToLower() == "mbelkin@urj.org") ||
+    (@User.Identity.Name.ToLower() == "dgoldberg@urj.org") ||
+    (@User.Identity.Name.ToLower() == "jpeltzman@urj.org"))
+{
+    <div class="btn btn-default">
+        @Html.ActionLink("Edit Web Signature", "EditPersonal", "SignatureHtmls", new { id = Model.HTMLID }, null)
+    </div>
+}
+<br />
+<div>
+    ------------------------------------------------------------------------------------------<br>
+    <b>COPY BELOW THIS LINE</b><br>
+    ------------------------------------------------------------------------------------------
+    <div id="display_aof">
+        @Html.Raw(Model.htmlString)
+    </div>
+
+    <div>
+        <div class=contact>
+            ------------------------------------------------------------------------------------------<br>
+            <b>COPY ABOVE THIS LINE</b><br>
+            ------------------------------------------------------------------------------------------<br>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.onload = function () {
+        var defaultName = @Html.Raw(Json.Encode(ViewData["defaultName"]));
+        var defaultDepartment = @Html.Raw(Json.Encode(ViewData["defaultDepartment"]));
+        var defaultTitle = @Html.Raw(Json.Encode(ViewData["defaultTitle"]));
+        var defaultContact = @Html.Raw(Json.Encode(ViewData["defaultContact"]));
+
+        document.getElementById("display_department").innerHTML = defaultDepartment;
+        document.getElementById("display_name").innerHTML = defaultName;
+        document.getElementById("display_title").innerHTML = defaultTitle;
+        document.getElementById("display_contact").innerHTML = defaultContact;
+    }
+</script>
+<!--
+<table style="font-family:Arial, Helvetica, sans-serif; font-size:12px; font-style:normal;" width="200" border="0" cellspacing="3" cellpadding="1" id="selectable" onclick="selectText('selectable')">
+    <tr>
+        <td valign="top" align="left">
+            <p style="font-family:Arial, Helvetica, sans-serif; font-size:12px; font-style:normal; margin-left:0px; ">
+                <span class="contact">ViewData["defaultName"]</span><br>
+                <span id="display_title">ViewData["defaultTitle"]</span><br>
+                <span id="display_department">ViewData["defaultDepartment"]</span><br>
+                <span class="contact">
+                    Union for Reform Judaism
+                </span>
+                <br />
+                <span class="contact">ViewData["defaultPhone"]</span>
+            </p>
+        </td>
+    </tr>
+</table>
+-->

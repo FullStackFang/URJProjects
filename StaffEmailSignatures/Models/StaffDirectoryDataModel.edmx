@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="StaffDirectoryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="SignatureHtml">
+          <Key>
+            <PropertyRef Name="HTMLID" />
+          </Key>
+          <Property Name="HTMLID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="htmlString" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="LastDateModified" Type="datetime" Nullable="false" />
+          <Property Name="AOF" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="StaffList">
+          <Key>
+            <PropertyRef Name="StaffID" />
+          </Key>
+          <Property Name="StaffID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" />
+          <Property Name="title" Type="nvarchar" MaxLength="255" />
+          <Property Name="department" Type="nvarchar" MaxLength="255" />
+          <Property Name="workemail" Type="nvarchar" MaxLength="255" />
+          <Property Name="workphone" Type="nvarchar" MaxLength="255" />
+          <Property Name="AOF" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityContainer Name="StaffDirectoryModelStoreContainer">
+          <EntitySet Name="SignatureHtml" EntityType="Self.SignatureHtml" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StaffList" EntityType="Self.StaffList" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="StaffDirectoryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="StaffList">
+          <Key>
+            <PropertyRef Name="StaffID" />
+          </Key>
+          <Property Name="StaffID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="title" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="department" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="workemail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="workphone" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AOF" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityContainer Name="StaffDirectoryEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="StaffLists" EntityType="Self.StaffList" />
+          <EntitySet Name="SignatureHtmls" EntityType="StaffDirectoryModel.SignatureHtml" />
+        </EntityContainer>
+        <EntityType Name="SignatureHtml">
+          <Key>
+            <PropertyRef Name="HTMLID" />
+          </Key>
+          <Property Name="HTMLID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="htmlString" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastDateModified" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="AOF" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="StaffDirectoryModelStoreContainer" CdmEntityContainer="StaffDirectoryEntities">
+          <EntitySetMapping Name="StaffLists">
+            <EntityTypeMapping TypeName="StaffDirectoryModel.StaffList">
+              <MappingFragment StoreEntitySet="StaffList">
+                <ScalarProperty Name="AOF" ColumnName="AOF" />
+                <ScalarProperty Name="StaffID" ColumnName="StaffID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="department" ColumnName="department" />
+                <ScalarProperty Name="workemail" ColumnName="workemail" />
+                <ScalarProperty Name="workphone" ColumnName="workphone" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SignatureHtmls">
+            <EntityTypeMapping TypeName="StaffDirectoryModel.SignatureHtml">
+              <MappingFragment StoreEntitySet="SignatureHtml">
+                <ScalarProperty Name="AOF" ColumnName="AOF" />
+                <ScalarProperty Name="LastDateModified" ColumnName="LastDateModified" />
+                <ScalarProperty Name="htmlString" ColumnName="htmlString" />
+                <ScalarProperty Name="HTMLID" ColumnName="HTMLID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

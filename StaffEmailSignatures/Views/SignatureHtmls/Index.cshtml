@@ -1,0 +1,52 @@
+﻿@model IEnumerable<StaffEmailSignatures.Models.SignatureHtml>
+
+@{
+    ViewBag.Title = "Email Signature Submissions";
+}
+<br>
+<div class="btn btn-default">
+    @Html.ActionLink("Create New Web Signature", "Create")
+    <br>
+</div>
+<br>
+<div>
+    <br />
+</div>
+
+<table class="table">
+
+    @foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.Raw(item.htmlString)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.Raw(item.HTMLID)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="btn bt-default">
+           @using (Html.BeginForm("SetPrimary", "SignatureHtmls", new { id = item.HTMLID }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="Submit" value="Set To Primary" class="btn btn-default" />
+            }
+            @using (Html.BeginForm("Edit", "SignatureHtmls", new { id = item.HTMLID }, FormMethod.Get))
+            {
+                @Html.AntiForgeryToken()
+                <input type="Submit" value="Edit" class="btn btn-default" />
+            }
+            </div>
+            <!--
+            <div class="btn btn-default">
+                Html.ActionLink("Edit", "Edit", new { id = item.HTMLID })
+            </div>
+                -->
+        </td>
+    </tr>
+}
+
+</table>
